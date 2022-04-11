@@ -237,7 +237,7 @@ QPushButton#freqButton:pressed {
    <widget class="QPushButton" name="freqSave">
     <property name="geometry">
      <rect>
-      <x>250</x>
+      <x>270</x>
       <y>550</y>
       <width>111</width>
       <height>21</height>
@@ -267,7 +267,7 @@ QPushButton#freqSave:pressed {
    <widget class="QPushButton" name="middleButton">
     <property name="geometry">
      <rect>
-      <x>140</x>
+      <x>150</x>
       <y>550</y>
       <width>111</width>
       <height>21</height>
@@ -313,7 +313,7 @@ QPushButton#middleButton:pressed {
    <widget class="QComboBox" name="AGC_select">
     <property name="geometry">
      <rect>
-      <x>360</x>
+      <x>390</x>
       <y>550</y>
       <width>121</width>
       <height>21</height>
@@ -341,7 +341,7 @@ QPushButton#middleButton:pressed {
    <widget class="QSpinBox" name="agc_thresholdSlider">
     <property name="geometry">
      <rect>
-      <x>480</x>
+      <x>520</x>
       <y>550</y>
       <width>81</width>
       <height>21</height>
