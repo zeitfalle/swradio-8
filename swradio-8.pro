@@ -116,9 +116,9 @@ isEmpty(GITHASHSTRING) {
 }
 
 DESTDIR		= ./linux-bin
-CONFIG		+= sdrplay
+#CONFIG		+= sdrplay
 CONFIG		+= hackrf
-CONFIG		+= rtlsdr
+#CONFIG		+= rtlsdr
 #CONFIG		+= pmsdr
 #CONFIG		+= cardReader
 CONFIG		+= am-decoder
@@ -133,9 +133,11 @@ CONFIG		+= mfsk-decoder
 CONFIG		+= drm-decoder-faad
 #CONFIG		+= drm-decoder-fdk
 #CONFIG		+= test-decoder
+CONFIG          += NO_NEON_RPI4
 LIBS		+= -L/usr/lib64
 LIBS		+= -L/lib64
 INCLUDEPATH	+= /usr/include/qt5/qwt
+INCLUDEPATH	+= /usr/include/qwt/
 LIBS		+= -lqwt-qt5 -lrt -lsndfile -lsamplerate -lportaudio -lusb-1.0 -lfftw3f -ldl
 }
 
@@ -623,5 +625,12 @@ drm-decoder-faad {
 	                   ./decoders/drm-decoder/data/packet-assembler.cpp \
 	                   ./decoders/drm-decoder/data/virtual-datahandler.cpp \
 	                   ./decoders/drm-decoder/data/mot-data.cpp 
+}
+
+NO_NEON_RPI4   {
+        DEFINES         += __MSC_THREAD__
+        DEFINES         += __THREADED_BACKEND
+        QMAKE_CFLAGS    +=  -mcpu=cortex-a72
+        QMAKE_CXXFLAGS  +=  -mcpu=cortex-a72
 }
 

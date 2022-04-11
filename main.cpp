@@ -22,107 +22,108 @@
  *
  *	Main program
  */
-#include	<QApplication>
-#include	<QSettings>
-#include	<QDir>
-#include	<unistd.h>
-#include	"radio.h"
-#include	"radio-constants.h"
-#include	"bandplan.h"
+#include "bandplan.h"
+#include "radio-constants.h"
+#include "radio.h"
+#include <QApplication>
+#include <QDir>
+#include <QSettings>
+#include <unistd.h>
 
-QString fullPathfor (QString v) {
-QString fileName;
+QString fullPathfor(QString v) {
+  QString fileName;
 
-	if (v == QString (""))
-	   return QString ("/tmp/xxx");
+  if (v == QString(""))
+    return QString("/tmp/xxx");
 
-	if (v. at (0) == QChar ('/'))           // full path specified
-	   return v;
+  if (v.at(0) == QChar('/')) // full path specified
+    return v;
 
-	fileName = QDir::homePath ();
-	fileName. append ("/");
-	fileName. append (v);
-	fileName = QDir::toNativeSeparators (fileName);
+  fileName = QDir::homePath();
+  fileName.append("/");
+  fileName.append(v);
+  fileName = QDir::toNativeSeparators(fileName);
 
-	if (!fileName. endsWith (".ini"))
-	   fileName. append (".ini");
+  if (!fileName.endsWith(".ini"))
+    fileName.append(".ini");
 
-	return fileName;
+  return fileName;
 }
 
-#define	DEFAULT_INI	".sw-radio.ini"
-#define	STATION_LIST	".sw-radio-stations.bin"
-#define	BAND_PLAN	".sw-bandplan.xml"
+#define DEFAULT_INI ".sw-radio.ini"
+#define STATION_LIST ".sw-radio-stations.bin"
+#define BAND_PLAN ".sw-bandplan.xml"
 
-int	main (int argc, char **argv) {
-int32_t		opt;
-/*
- *	The default values
- */
-QSettings	*ISettings;		/* .ini file	*/
-RadioInterface	*MyRadioInterface;
-QString iniFile		= QDir::homePath ();
-QString stationList     = QDir::homePath ();
-QString	bandplanFile	= QDir::homePath ();
+int main(int argc, char** argv) {
+  int32_t opt;
+  /*
+   *	The default values
+   */
+  QSettings* ISettings; /* .ini file	*/
+  RadioInterface* MyRadioInterface;
+  QString iniFile = QDir::homePath();
+  QString stationList = QDir::homePath();
+  QString bandplanFile = QDir::homePath();
 
-	QCoreApplication::setOrganizationName ("Lazy Chair Computing");
-        QCoreApplication::setOrganizationDomain ("Lazy Chair Computing");
-        QCoreApplication::setApplicationName ("sw-radio");
-        QCoreApplication::setApplicationVersion (QString (CURRENT_VERSION) + " Git: " + GITHASH);
+  QCoreApplication::setOrganizationName("Lazy Chair Computing");
+  QCoreApplication::setOrganizationDomain("Lazy Chair Computing");
+  QCoreApplication::setApplicationName("sw-radio");
+  QCoreApplication::setApplicationVersion(QString(CURRENT_VERSION) + " Git: " + GITHASH);
 
-        iniFile. append ("/");
-        iniFile. append (DEFAULT_INI);
-        iniFile = QDir::toNativeSeparators (iniFile);
+  iniFile.append("/");
+  iniFile.append(DEFAULT_INI);
+  iniFile = QDir::toNativeSeparators(iniFile);
 
-        stationList. append ("/");
-        stationList. append (STATION_LIST);
-        stationList = QDir::toNativeSeparators (stationList);
+  stationList.append("/");
+  stationList.append(STATION_LIST);
+  stationList = QDir::toNativeSeparators(stationList);
 
-	bandplanFile. append ("/");
-	bandplanFile. append (BAND_PLAN);
-        bandplanFile = QDir::toNativeSeparators (bandplanFile);
+  bandplanFile.append("/");
+  bandplanFile.append(BAND_PLAN);
+  bandplanFile = QDir::toNativeSeparators(bandplanFile);
 
-        while ((opt = getopt (argc, argv, "i:B:")) != -1) {
-           switch (opt) {
-              case 'i':
-                 iniFile	= fullPathfor (QString (optarg));
-                 break;
+  while ((opt = getopt(argc, argv, "i:B:")) != -1) {
+    switch (opt) {
+    case 'i':
+      iniFile = fullPathfor(QString(optarg));
+      break;
 
-              case 'B':
-                 bandplanFile       = atoi (optarg);
-                 break;
+    case 'B':
+      bandplanFile = atoi(optarg);
+      break;
 
-             default:
-                 break;
-           }
-        }
+    default:
+      break;
+    }
+  }
 
 #if QT_VERSION >= 0x050600
-        QGuiApplication::setAttribute (Qt::AA_EnableHighDpiScaling);
+  QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
-	QApplication a (argc, argv);
+  QApplication a(argc, argv);
 
-	ISettings	= new QSettings (iniFile, QSettings::IniFormat);
-/*
- *	Before we connect control to the gui, we have to
- *	instantiate
- */
-	int rate	= ISettings -> value ("workingRate", 96000). toInt ();
-	bandPlan my_bandPlan (bandplanFile);
-        MyRadioInterface = new RadioInterface (ISettings,
-	                                       stationList,
-	                                       &my_bandPlan,
-	                                       96000, 12000);
-	MyRadioInterface -> show ();
-        a. exec ();
-/*
- *	done:
- */
-	fflush (stdout);
-	fflush (stderr);
-	qDebug ("It is done\n");
-	ISettings	-> sync ();
-	fprintf (stderr, "we gaan deleten\n");
-	delete MyRadioInterface;
-//	ISettings	-> ~QSettings ();
+  ISettings = new QSettings(iniFile, QSettings::IniFormat);
+
+  /*
+   *	Before we connect control to the gui, we have to
+   *	instantiate
+   */
+
+  int rate = ISettings->value("workingRate", 96000).toInt();
+  bandPlan my_bandPlan(bandplanFile);
+  MyRadioInterface = new RadioInterface(ISettings, stationList, &my_bandPlan, 96000, 12000);
+  MyRadioInterface->show();
+  a.exec();
+
+  /*
+   *	done:
+   */
+
+  fflush(stdout);
+  fflush(stderr);
+  qDebug("It is done\n");
+  ISettings->sync();
+  fprintf(stderr, "Getting ready to delete\n");
+  delete MyRadioInterface;
+  //	ISettings	-> ~QSettings ();
 }
