@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>drm decoder</string>
+   <string>DRM Decoder</string>
   </property>
   <widget class="QwtPlot" name="equalizerDisplay">
    <property name="geometry">

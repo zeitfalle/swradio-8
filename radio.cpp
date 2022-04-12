@@ -136,34 +136,34 @@ RadioInterface::RadioInterface(QSettings* sI, QString stationList, bandPlan* my_
   decoderTable->addItem("test decoder");
 #endif
 #ifdef HAVE_AM_DECODER
-  decoderTable->addItem("am decoder");
+  decoderTable->addItem("AM Decoder");
 #endif
 #ifdef HAVE_SSB_DECODER
-  decoderTable->addItem("ssb decoder");
+  decoderTable->addItem("SSB Decoder");
 #endif
 #ifdef HAVE_CW_DECODER
-  decoderTable->addItem("cw decoder");
+  decoderTable->addItem("CW Decoder");
 #endif
 #ifdef HAVE_AMTOR_DECODER
-  decoderTable->addItem("amtor decoder");
+  decoderTable->addItem("AMTOR Decoder");
 #endif
 #ifdef HAVE_PSK_DECODER
-  decoderTable->addItem("psk decoder");
+  decoderTable->addItem("PSK Decoder");
 #endif
 #ifdef HAVE_NEW_DECODER
   decoderTable->addItem("new decoder");
 #endif
 #ifdef HAVE_RTTY_DECODER
-  decoderTable->addItem("rtty decoder");
+  decoderTable->addItem("RTTY Decoder");
 #endif
 #ifdef HAVE_FAX_DECODER
-  decoderTable->addItem("wfax decoder");
+  decoderTable->addItem("WFAX Decoder");
 #endif
 #ifdef HAVE_MFSK_DECODER
-  decoderTable->addItem("mfsk decoder");
+  decoderTable->addItem("MFSK Decoder");
 #endif
 #ifdef HAVE_DRM_DECODER
-  decoderTable->addItem("drm decoder");
+  decoderTable->addItem("DRM Decoder");
 #endif
   displaySize = 1024;
   scopeWidth = inputRate;
@@ -362,28 +362,28 @@ virtualDecoder* RadioInterface::selectDecoder(const QString& s) {
   } else
 #endif
 #ifdef HAVE_AM_DECODER
-      if (s == "am decoder") {
+      if (s == "AM Decoder") {
     theDecoder = new amDecoder(decoderRate, audioData, settings);
   } else
 #endif
 #ifdef HAVE_SSB_DECODER
-      if (s == "ssb decoder") {
+      if (s == "SSB Decoder") {
     theDecoder = new ssbDecoder(decoderRate, audioData, settings);
   } else
 #endif
 #ifdef HAVE_CW_DECODER
-      if (s == "cw decoder") {
+      if (s == "CW Decoder") {
     theDecoder = new cwDecoder(decoderRate, audioData, settings);
     connect(theDecoder, SIGNAL(adjustFrequency(int)), this, SLOT(adjustFrequency_hz(int)));
   } else
 #endif
 #ifdef HAVE_AMTOR_DECODER
-      if (s == "amtor decoder") {
+      if (s == "AMTOR Decoder") {
     theDecoder = new amtorDecoder(decoderRate, audioData, settings);
   } else
 #endif
 #ifdef HAVE_PSK_DECODER
-      if (s == "psk decoder") {
+      if (s == "PSK Decoder") {
     theDecoder = new pskDecoder(decoderRate, audioData, settings);
     connect(theDecoder, SIGNAL(adjustFrequency(int)), this, SLOT(adjustFrequency_hz(int)));
   } else
@@ -394,17 +394,17 @@ virtualDecoder* RadioInterface::selectDecoder(const QString& s) {
   } else
 #endif
 #ifdef HAVE_RTTY_DECODER
-      if (s == "rtty decoder") {
+      if (s == "RTTY Decoder") {
     theDecoder = new rttyDecoder(decoderRate, audioData, settings);
   } else
 #endif
 #ifdef HAVE_FAX_DECODER
-      if (s == "wfax decoder") {
+      if (s == "WFAX Decoder") {
     theDecoder = new faxDecoder(decoderRate, audioData, settings);
   } else
 #endif
 #ifdef HAVE_DRM_DECODER
-      if (s == "drm decoder") {
+      if (s == "DRM Decoder") {
     theDecoder = new drmDecoder(decoderRate, audioData, settings);
   } else
 #endif
@@ -665,9 +665,9 @@ void RadioInterface::processAudio(int amount, int rate) {
 void RadioInterface::set_AGCMode(const QString& s) {
   uint8_t gainControl;
 
-  if (s == "AGC off")
+  if (s == "AGC Off")
     gainControl = agcHandler::AGC_OFF;
-  else if (s == "slow")
+  else if (s == "Slow")
     gainControl = agcHandler::AGC_SLOW;
   else
     gainControl = agcHandler::AGC_FAST;

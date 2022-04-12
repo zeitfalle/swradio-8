@@ -64,7 +64,7 @@ public:
 
     void retranslateUi(QWidget *ssb_decoder)
     {
-        ssb_decoder->setWindowTitle(QCoreApplication::translate("ssb_decoder", "ssb decoder", nullptr));
+        ssb_decoder->setWindowTitle(QCoreApplication::translate("ssb_decoder", "SSB Decoder", nullptr));
 #if QT_CONFIG(tooltip)
         adaptiveFilterButton->setToolTip(QCoreApplication::translate("ssb_decoder", "<html><head/><body><p>Adaptive noise filter can be set by this button. The slider then sets the degree.</p></body></html>", nullptr));
 #endif // QT_CONFIG(tooltip)

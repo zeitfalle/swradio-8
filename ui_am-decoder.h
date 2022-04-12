@@ -69,7 +69,7 @@ public:
 
     void retranslateUi(QWidget *am_decoder)
     {
-        am_decoder->setWindowTitle(QCoreApplication::translate("am_decoder", "am decoder", nullptr));
+        am_decoder->setWindowTitle(QCoreApplication::translate("am_decoder", "AM Decoder", nullptr));
 #if QT_CONFIG(tooltip)
         adaptiveFilterButton->setToolTip(QCoreApplication::translate("am_decoder", "<html><head/><body><p>Adaptive noise filter can be set by this button. The slider then sets the degree.</p></body></html>", nullptr));
 #endif // QT_CONFIG(tooltip)

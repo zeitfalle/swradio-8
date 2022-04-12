@@ -121,7 +121,7 @@ public:
         streamOutSelector->setGeometry(QRect(620, 0, 151, 31));
         freqSave = new QPushButton(centralwidget);
         freqSave->setObjectName(QString::fromUtf8("freqSave"));
-        freqSave->setGeometry(QRect(250, 550, 111, 21));
+        freqSave->setGeometry(QRect(270, 550, 111, 21));
         freqSave->setStyleSheet(QString::fromUtf8("QPushButton#freqSave {\n"
 "    background-color:#4dff88 ;\n"
 "    color:black;\n"
@@ -136,7 +136,7 @@ public:
 "}"));
         middleButton = new QPushButton(centralwidget);
         middleButton->setObjectName(QString::fromUtf8("middleButton"));
-        middleButton->setGeometry(QRect(140, 550, 111, 21));
+        middleButton->setGeometry(QRect(150, 550, 111, 21));
         middleButton->setStyleSheet(QString::fromUtf8("QPushButton#middleButton {\n"
 "    background-color:#4dff88 ;\n"
 "    color:black;\n"
@@ -158,10 +158,10 @@ public:
         AGC_select->addItem(QString());
         AGC_select->addItem(QString());
         AGC_select->setObjectName(QString::fromUtf8("AGC_select"));
-        AGC_select->setGeometry(QRect(360, 550, 121, 21));
+        AGC_select->setGeometry(QRect(390, 550, 121, 21));
         agc_thresholdSlider = new QSpinBox(centralwidget);
         agc_thresholdSlider->setObjectName(QString::fromUtf8("agc_thresholdSlider"));
-        agc_thresholdSlider->setGeometry(QRect(480, 550, 81, 21));
+        agc_thresholdSlider->setGeometry(QRect(520, 550, 81, 21));
         agc_thresholdSlider->setMinimum(-144);
         agc_thresholdSlider->setMaximum(0);
         agc_thresholdSlider->setValue(-100);
@@ -225,7 +225,7 @@ public:
 #if QT_CONFIG(tooltip)
         hfSpectrum->setToolTip(QString());
 #endif // QT_CONFIG(tooltip)
-        decoderTable->setItemText(0, QCoreApplication::translate("MainWindow", "select decoder", nullptr));
+        decoderTable->setItemText(0, QCoreApplication::translate("MainWindow", "Select Decoder", nullptr));
 
 #if QT_CONFIG(tooltip)
         decoderTable->setToolTip(QString());
@@ -234,7 +234,7 @@ public:
         freqButton->setToolTip(QString());
 #endif // QT_CONFIG(tooltip)
         freqButton->setText(QCoreApplication::translate("MainWindow", "Select Freq", nullptr));
-        bandSelector->setItemText(0, QCoreApplication::translate("MainWindow", "am", nullptr));
+        bandSelector->setItemText(0, QCoreApplication::translate("MainWindow", "AM", nullptr));
         bandSelector->setItemText(1, QCoreApplication::translate("MainWindow", "200", nullptr));
         bandSelector->setItemText(2, QCoreApplication::translate("MainWindow", "500", nullptr));
         bandSelector->setItemText(3, QCoreApplication::translate("MainWindow", "1000", nullptr));
@@ -245,9 +245,9 @@ public:
         bandSelector->setItemText(8, QCoreApplication::translate("MainWindow", "6000", nullptr));
         bandSelector->setItemText(9, QCoreApplication::translate("MainWindow", "7000", nullptr));
         bandSelector->setItemText(10, QCoreApplication::translate("MainWindow", "8000", nullptr));
-        bandSelector->setItemText(11, QCoreApplication::translate("MainWindow", "usb", nullptr));
-        bandSelector->setItemText(12, QCoreApplication::translate("MainWindow", "lsb", nullptr));
-        bandSelector->setItemText(13, QCoreApplication::translate("MainWindow", "wide", nullptr));
+        bandSelector->setItemText(11, QCoreApplication::translate("MainWindow", "USB", nullptr));
+        bandSelector->setItemText(12, QCoreApplication::translate("MainWindow", "LSB", nullptr));
+        bandSelector->setItemText(13, QCoreApplication::translate("MainWindow", "Wide", nullptr));
 
 #if QT_CONFIG(tooltip)
         bandSelector->setToolTip(QString());
@@ -266,9 +266,9 @@ public:
 #if QT_CONFIG(tooltip)
         mouse_Inc->setToolTip(QCoreApplication::translate("MainWindow", "<html><head/><body><p>Mouse Increment. The amount of Hz that will change when moving the mousewheel is set here.</p></body></html>", nullptr));
 #endif // QT_CONFIG(tooltip)
-        AGC_select->setItemText(0, QCoreApplication::translate("MainWindow", "AGC off", nullptr));
-        AGC_select->setItemText(1, QCoreApplication::translate("MainWindow", "slow", nullptr));
-        AGC_select->setItemText(2, QCoreApplication::translate("MainWindow", "fast", nullptr));
+        AGC_select->setItemText(0, QCoreApplication::translate("MainWindow", "AGC Off", nullptr));
+        AGC_select->setItemText(1, QCoreApplication::translate("MainWindow", "Slow", nullptr));
+        AGC_select->setItemText(2, QCoreApplication::translate("MainWindow", "Fast", nullptr));
 
 #if QT_CONFIG(tooltip)
         AGC_select->setToolTip(QCoreApplication::translate("MainWindow", "<html><head/><body><p>Agc, automatic gain control, will be enabled when the agc is switched on and the signal strength exceeds</p><p>the value in the spinbox. </p></body></html>", nullptr));
@@ -281,7 +281,7 @@ public:
 #if QT_CONFIG(tooltip)
         dumpButton->setToolTip(QString());
 #endif // QT_CONFIG(tooltip)
-        dumpButton->setText(QCoreApplication::translate("MainWindow", "dump", nullptr));
+        dumpButton->setText(QCoreApplication::translate("MainWindow", "Dump", nullptr));
         bandLabel->setText(QString());
     } // retranslateUi
 

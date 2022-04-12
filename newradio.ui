@@ -77,7 +77,7 @@
     </property>
     <item>
      <property name="text">
-      <string>select decoder</string>
+      <string>Select Decoder</string>
      </property>
     </item>
    </widget>
@@ -152,7 +152,7 @@ QPushButton#freqButton:pressed {
     </property>
     <item>
      <property name="text">
-      <string>am</string>
+      <string>AM</string>
      </property>
     </item>
     <item>
@@ -207,17 +207,17 @@ QPushButton#freqButton:pressed {
     </item>
     <item>
      <property name="text">
-      <string>usb</string>
+      <string>USB</string>
      </property>
     </item>
     <item>
      <property name="text">
-      <string>lsb</string>
+      <string>LSB</string>
      </property>
     </item>
     <item>
      <property name="text">
-      <string>wide</string>
+      <string>Wide</string>
      </property>
     </item>
    </widget>
@@ -324,17 +324,17 @@ QPushButton#middleButton:pressed {
     </property>
     <item>
      <property name="text">
-      <string>AGC off</string>
+      <string>AGC Off</string>
      </property>
     </item>
     <item>
      <property name="text">
-      <string>slow</string>
+      <string>Slow</string>
      </property>
     </item>
     <item>
      <property name="text">
-      <string>fast</string>
+      <string>Fast</string>
      </property>
     </item>
    </widget>
@@ -407,7 +407,7 @@ QPushButton#middleButton:pressed {
      <string/>
     </property>
     <property name="text">
-     <string>dump</string>
+     <string>Dump</string>
     </property>
    </widget>
    <widget class="QwtPlot" name="audioSpectrum">

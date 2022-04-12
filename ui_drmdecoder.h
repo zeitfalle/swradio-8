@@ -210,7 +210,7 @@ public:
 
     void retranslateUi(QWidget *drmdecoder)
     {
-        drmdecoder->setWindowTitle(QCoreApplication::translate("drmdecoder", "drm decoder", nullptr));
+        drmdecoder->setWindowTitle(QCoreApplication::translate("drmdecoder", "DRM Decoder", nullptr));
         messageLabel->setText(QString());
         audioModelabel->setText(QString());
         modeIndicator->setText(QString());
