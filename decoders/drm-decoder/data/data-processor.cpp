@@ -72,12 +72,14 @@ uint32_t y;
 }
 
 	dataProcessor::dataProcessor	(stateDescriptor *theState,
-	                                 drmDecoder *drm):
-	                                   my_messageProcessor (drm) ,
-	                                   my_aacProcessor (theState, drm)
+	                                 drmDecoder *drm,
+	                                 RingBuffer<std::complex<float>> *audioBuffer):
+	                                   my_aacProcessor (theState,
+	                                                    drm, audioBuffer)
 #ifdef	__WITH_FDK_AAC__
 	                                   ,my_xheaacProcessor (theState,
-	                                                                drm)
+	                                                        drm,
+	                                                        audioBuffer)
 #endif
 	{
 	this	-> theState		= theState;
@@ -149,8 +151,6 @@ int16_t	new_dataChannel	= drmMaster	-> getDataChannel ();
 	                               (audioChannel == i)) {
 	      process_audio (v, i, startPosA, lengthA,
 	                           startPosB, lengthB);
-	      my_messageProcessor.  processMessage (v,
-	                                       8 * (startPosB + lengthB - 4));
 	   }
 	   else
 	   if ((theState -> streams [i]. soort ==

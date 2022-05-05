@@ -42,12 +42,15 @@ uint16_t	res	= 0;
 
 	aacProcessor_faad::aacProcessor_faad	(
 	                                 stateDescriptor *theState,
-	                                 drmDecoder *drm):
+	                                 drmDecoder *drm,
+	                                 RingBuffer<std::compelx<float>> *b):
+	                                      my_messageProcessor (drm),
 	                                      upFilter_24000 (5, 12000, 48000),
 	                                      upFilter_12000 (5, 6000, 48000) {
 	
 	this	-> theState		= theState;
 	this	-> drmMaster		= drm;
+	this	-> audioBuffer		= b;
 	this	-> theDecoder		= nullptr;
 //
 //	these are "previous values"
@@ -59,6 +62,8 @@ uint16_t	res	= 0;
                  drm,  SLOT (aacData (QString)));
 	connect (this, SIGNAL (putSample (float, float)),
 	         drmMaster, SLOT (sampleOut (float, float)));
+	connect (this, SIGNAL (samplesAvailable ()),
+	         drmMaster, SLOT (samplesAvailable ()));
 	connect (this, SIGNAL (faadSuccess (bool)),
 	         drmMaster, SLOT (faadSuccess (bool)));
 }
@@ -76,9 +81,9 @@ void	aacProcessor_faad::process_aac (uint8_t *v, int16_t mscIndex,
 	                                int16_t lengthLow) {
 	if (lengthHigh != 0) 
 	   handle_uep_audio (v, mscIndex, startHigh, lengthHigh,
-	                            startLow, lengthLow - 4);
+	                            startLow, lengthLow);
 	else 
-	   handle_eep_audio (v, mscIndex,  startLow, lengthLow - 4);
+	   handle_eep_audio (v, mscIndex,  startLow, lengthLow);
 }
 
 static
@@ -137,6 +142,13 @@ int16_t	payloadLength;
 	         f [i]. audio [audioinHP + j] =
 	                    get_MSCBits (v, (entryinLP++) * 8, 8);
 	}
+
+	if (theState -> streams [mscIndex]. textFlag) {
+           my_messageProcessor.
+                           processMessage (v, (startLow + lengthLow - 4) * 8);
+           lengthLow -= 4;
+        }
+
 	playOut (mscIndex);
 }
 
@@ -168,6 +180,13 @@ int16_t		payLoad_length = 0;
 	numFrames = theState -> streams [mscIndex].
 	                             audioSamplingRate == 1 ? 5 : 10;
 	headerLength = numFrames == 10 ? (9 * 12 + 4) / 8 : (4 * 12) / 8;
+
+	if (theState -> streams [mscIndex]. textFlag) {
+	   fprintf (stderr, "%d\n", startLow + lengthLow - 4);
+	   my_messageProcessor.
+                           processMessage (v, (startLow + lengthLow - 4) * 8);
+           lengthLow -= 4;
+        }
 
 //	startLow in bytes!!
 	f [0]. startPos = 0;
@@ -249,8 +268,8 @@ int16_t	i;
 	if (cnt == 0)
 	   return;
 
-	for (i = 0; i < cnt; i ++)
-	   putSample (real (b [i]), imag (b [i]));
+	audioBuffer	-> putDataIntoBuffer (b, cnt);
+	samplesAvailable ();
 }
 
 void	aacProcessor_faad::writeOut (int16_t *buffer, int16_t cnt,

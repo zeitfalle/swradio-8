@@ -35,6 +35,7 @@
 #include <cstring>
 /*
  */
+<<<<<<< HEAD
 drmDecoder::drmDecoder(int32_t inRate, RingBuffer<std::complex<float>>* audioBuffer, QSettings* s)
     : virtualDecoder(inRate, audioBuffer), myFrame(nullptr), iqBuffer(32768), eqBuffer(32768), buffer(12000), Filter_10(21, 5500, inRate) {
 
@@ -87,6 +88,84 @@ drmDecoder::~drmDecoder(void) {
   while (my_frameProcessor->isRunning())
     usleep(10);
   delete my_frameProcessor;
+=======
+		drmDecoder::drmDecoder (int32_t		inRate,
+	                                RingBuffer<std::complex<float> > *audioBuffer,
+	                                QSettings *s):
+	                                   virtualDecoder (inRate,
+	                                                   audioBuffer),
+	                                   myFrame (nullptr),
+	                                   iqBuffer (32768),
+	                                   eqBuffer (32768),
+	                                   buffer   (12000),
+	                                   Filter_10 (21, 5500, inRate) {
+
+QString	temp;
+int16_t	symbs;
+
+	this			-> workingRate	= inRate;
+	this			-> audioOut	= audioBuffer;
+	(void)s;
+        setupUi (&myFrame);
+	my_iqDisplay		= new IQDisplay (iqPlotter, 512);
+	my_eqDisplay		= new EQDisplay (equalizerDisplay);
+        myFrame. show ();
+	theRate			= inRate;
+	decimatorFlag		= false;
+	timeSyncLabel	-> setStyleSheet ("QLabel {background-color:red}");
+	facSyncLabel	-> setStyleSheet ("QLabel {background-color:red}");
+	sdcSyncLabel	-> setStyleSheet ("QLabel {background-color:red}");
+	faadSyncLabel	-> setStyleSheet ("QLabel {background-color:red}");
+
+	
+
+	localOscillator. resize (12000);
+	for (int i = 0; i < 12000; i ++)
+	   localOscillator [i] =
+	         std::complex<float> (cos ((float)i * 2 * M_PI / 12000),
+	                              sin ((float)i * 2 * M_PI / 12000));
+
+	channel_1	-> hide ();
+	channel_2	-> hide ();
+	channel_3	-> hide ();
+	channel_4	-> hide ();
+
+	symbs			= 45;
+	int8_t windowDepth 	= 2;
+	int8_t qam64Roulette 	= 4;
+	connect (channel_1, SIGNAL (clicked (void)),
+	         this, SLOT (selectChannel_1 (void)));
+	connect (channel_2, SIGNAL (clicked (void)),
+	         this, SLOT (selectChannel_2 (void)));
+	connect (channel_3, SIGNAL (clicked (void)),
+	         this, SLOT (selectChannel_3 (void)));
+	connect (channel_4, SIGNAL (clicked (void)),
+	         this, SLOT (selectChannel_4 (void)));
+	theFilter	= &Filter_10;
+	running			= true;
+
+	my_frameProcessor	= new frameProcessor (this,
+	                                              &buffer,
+	                                              &iqBuffer,
+	                                              &eqBuffer,
+	                                              audioOut,
+	                                              12000,
+	                                              symbs,
+	                                              windowDepth,
+	                                              qam64Roulette);
+	my_frameProcessor	-> start	();
+	setDetectorMarker	(0);
+	currentPhase		= 0;
+	phaseOffset		= 0;
+}
+
+	drmDecoder::~drmDecoder		(void) {
+	running		= false;
+	my_frameProcessor -> stop ();
+	while (my_frameProcessor -> isRunning ())
+	   usleep (10);
+	delete	my_frameProcessor;
+>>>>>>> 13f7ded765b6129a07793d5b0c777ece446b44e3
 }
 
 //	Basically a simple approach. The "frameProcessor" does the
@@ -267,7 +346,93 @@ void drmDecoder::faadSuccess(bool b) {
   }
 }
 
+<<<<<<< HEAD
 void drmDecoder::aacData(QString text) { aacDataLabel->setText(text); }
+=======
+void	drmDecoder::show_audioMode	(QString s) {
+	audioModelabel	-> setText (s);
+}
+
+static std::complex<float> lbuf [4800];
+static int fillP	= 0;
+void	drmDecoder::sampleOut		(float re, float im) {
+std::complex<float> z	= std::complex<float> (re, im);
+	lbuf [fillP] = z;
+	fillP ++;
+	if (fillP >= 4800) {
+	   audioOut	-> putDataIntoBuffer (lbuf, 4800);
+	   audioAvailable (audioOut -> GetRingBufferReadAvailable (), 48000);
+	   fillP = 0;
+	}
+}
+
+void	drmDecoder::samplesAvailable () {
+	if (audioOut -> GetRingBufferReadAvailable ()  >= 4800)
+	   audioAvailable (audioOut -> GetRingBufferReadAvailable (), 48000);
+}
+
+void	drmDecoder::showSNR		(float snr) {
+	snrDisplay	-> display (snr);
+}
+
+static	bool audio_channel_1	= true;
+static	bool audio_channel_2	= false;
+static	bool data_channel_1	= true;
+static	bool data_channel_2	= false;
+
+void	drmDecoder::selectChannel_1	(void) {
+	audio_channel_1 = true;
+	audio_channel_2 = false;
+}
+
+void	drmDecoder::selectChannel_2	(void) {
+	audio_channel_1 = false;
+	audio_channel_2 = true;
+}
+
+void	drmDecoder::selectChannel_3	(void) {
+	data_channel_1	= true;
+	data_channel_2	= false;
+}
+
+void	drmDecoder::selectChannel_4	(void) {
+	data_channel_1	= false;
+	data_channel_2	= true;
+}
+
+int16_t	drmDecoder::getAudioChannel	(void) {
+	return audio_channel_1 ? 0 : 1;
+}
+
+int16_t	drmDecoder::getDataChannel	(void) {
+int16_t	c = 0;
+	if (channel_1 -> isHidden ()) c ++;
+	if (channel_2 -> isHidden ()) c ++;
+	return data_channel_1 ? 2 - c : 
+	          data_channel_2 ? 3 - c: -1;
+}
+
+static	int	faadCounter	= 0;
+static	int	goodfaad	= 0;
+void	drmDecoder::faadSuccess		(bool b) {
+	faadCounter ++;
+	if (b)
+	   faadSyncLabel -> setStyleSheet ("QLabel {background-color:green}");
+	else
+	   faadSyncLabel -> setStyleSheet ("QLabel {background-color:red}");
+	if (b)
+	   goodfaad ++;
+	if (faadCounter > 500) {
+	   fprintf (stderr, "faad ratio is %f\n", (float)goodfaad / faadCounter);
+	   goodfaad	= 0;
+	   faadCounter	= 0;
+	}
+}
+
+void	drmDecoder::aacData (QString text) {
+	aacDataLabel -> setText (text);
+}
+>>>>>>> 13f7ded765b6129a07793d5b0c777ece446b44e3
 
 //	showMOT is triggered by the MOT handler,
 //	the GUI may decide to ignore the data sent

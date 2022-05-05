@@ -35,6 +35,8 @@
 #include	"fir-filters.h"
 #include	"basics.h"
 #include	"checkcrc.h"
+#include	"message-processor.h"
+#include	"ringbuffer.h"
 
 class	drmDecoder;
 class	rateConverter;
@@ -44,7 +46,8 @@ class	xheaacProcessor: public QObject {
 Q_OBJECT
 public:
 			xheaacProcessor	(stateDescriptor *,
-	                                 drmDecoder *);
+	                                 drmDecoder *,
+	                                 RingBuffer<std::complex<float>> *);
 			~xheaacProcessor	();
 	void		process_usac	(uint8_t *v, int16_t mscIndex,
                                          int16_t startHigh, int16_t lengthHigh,
@@ -52,21 +55,22 @@ public:
 private:
 	stateDescriptor	*theState;
 	drmDecoder	*parent;
+	RingBuffer<std::complex<float>> *audioBuffer;
 	checkCRC	theCRC;
-	LowPassFIR      upFilter_24000;
-        LowPassFIR      upFilter_12000;
+	messageProcessor	my_messageProcessor;
+	rateConverter	*theConverter;
 	void		resetBuffers	();
 	void		processFrame	(int);
 	int		currentRate;
 	std::vector<uint8_t>
         		getAudioInformation (stateDescriptor *drm,
                                                         int streamId);
-//	deque<uint8_t>	frameBuffer;
-//	vector<uint32_t> borders;
+	vector<uint8_t>	frameBuffer;
+	vector<uint32_t> borders;
 	int		numFrames;
 	void		writeOut	(int16_t *, int16_t, int32_t);
-	void		toOutput	(float *, int16_t);
-	void		playOut		(std::vector<uint8_t>);
+	void		toOutput	(std::complex<float> *, int16_t);
+	void		playOut		(std::vector<uint8_t> &, int, int);
 
 //	added to support inclusion of the last phase
 	void		reinit		(std::vector<uint8_t>, int);
@@ -89,7 +93,7 @@ private:
         uint32_t        bufferP;
         std::vector<uint8_t>    currentConfig;
 signals:
-	void            putSample       (float, float);
+	void		samplesAvailable	();
 	void            faadSuccess     (bool);
 	void		aacData		(QString);
 };

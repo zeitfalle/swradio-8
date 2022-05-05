@@ -41,15 +41,20 @@ uint16_t	res	= 0;
 }
 //
 	aacProcessor_fdk::aacProcessor_fdk (stateDescriptor *theState,
-	                                    drmDecoder *drm):
+	                                    drmDecoder *drm,
+	                                    RingBuffer<std::complex<float>> *b):
+	                                    my_messageProcessor (drm),
 	                                    upFilter_24000 (5, 12000, 48000),
 	                                    upFilter_12000 (5, 6000, 48000) {
 
 	this	-> theState	= theState;
 	this	-> drmMaster	= drm;
+	this	-> audioBuffer	= b;
 	this	-> handle	= aacDecoder_Open (TT_DRM, 2);
 	connect (this, SIGNAL (putSample (float, float)),
 	         drmMaster, SLOT (sampleOut (float, float)));
+	connect (this, SIGNAL (samplesAvailable ()),
+	         drmMaster, SLOT (samplesAvailable ()));
 	connect (this, SIGNAL (faadSuccess (bool)),
 	         drmMaster, SLOT (faadSuccess (bool)));
 	connect (this, SIGNAL (aacData (QString)),
@@ -66,9 +71,9 @@ void	aacProcessor_fdk::process_aac (uint8_t *v, int16_t mscIndex,
 	                               int16_t startLow,  int16_t lengthLow) {
 	if (lengthHigh != 0) 
 	   handle_uep_audio (v, mscIndex, startHigh, lengthHigh,
-	                            startLow, lengthLow - 4);
+	                            startLow, lengthLow);
 	else 
-	   handle_eep_audio (v, mscIndex,  startLow, lengthLow - 4);
+	   handle_eep_audio (v, mscIndex,  startLow, lengthLow);
 }
 
 
@@ -127,6 +132,10 @@ int16_t	payloadLength;
 	         f [i]. audio [audioinHP + j] =
 	                    get_MSCBits (v, (entryinLP++) * 8, 8);
 	}
+	if (theState -> streams [i]. textFlag)
+	   my_messageProcessor.
+                           processMessage (v, (startLow + lengthLow - 4) * 8);
+	
 	playOut (mscIndex);
 }
 
@@ -142,6 +151,12 @@ int16_t		payLoad_length = 0;
 
 	numFrames = theState -> streams [mscIndex]. audioSamplingRate == 1 ? 5 : 10;
 	headerLength = numFrames == 10 ? (9 * 12 + 4) / 8 : (4 * 12) / 8;
+
+	if (theState -> streams [mscIndex]. textFlag) {
+           my_messageProcessor.
+                           processMessage (v, (startLow + lengthLow - 4) * 8);
+           lengthLow -= 4;
+        }
 
 //	startLow in bytes!!
 	f [0]. startPos = 0;
@@ -237,8 +252,8 @@ int16_t	i;
 	if (cnt == 0)
 	   return;
 
-	for (i = 0; i < cnt / 2; i ++)
-	   putSample (b [2 * i], b [2 * i + 1]);
+	audioBuffer	-> putDataIntoBuffer ((std::complex<float> *)b, cnt / 2);
+	samplesAvailable ();
 }
 
 void	aacProcessor_fdk::writeOut (int16_t *buffer, int16_t cnt,

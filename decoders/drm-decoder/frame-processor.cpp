@@ -45,6 +45,7 @@
 //	allow some fidling - without recompilation - with the
 //	size of the window used for equalization and the
 //	number of iterations for the multi-level decoding
+<<<<<<< HEAD
 frameProcessor::frameProcessor(drmDecoder* mr, RingBuffer<std::complex<float>>* buffer, RingBuffer<std::complex<float>>* iqBuffer,
                                RingBuffer<std::complex<float>>* eqBuffer, int32_t sampleRate, int16_t nSymbols, int8_t windowDepth, int8_t qam64Roulette)
     : my_Reader(buffer, 4 * 16384, mr), my_backendController(mr, iqBuffer, qam64Roulette), theState(mr, 1, 3) {
@@ -69,6 +70,52 @@ frameProcessor::frameProcessor(drmDecoder* mr, RingBuffer<std::complex<float>>* 
   connect(this, SIGNAL(show_audioMode(QString)), theDecoder, SLOT(show_audioMode(QString)));
   //	connect (this, SIGNAL (showSNR (float)),
   //	         theDecoder, SLOT (showSNR (float)));
+=======
+	frameProcessor::frameProcessor (drmDecoder	*mr,
+	                                RingBuffer<std::complex<float>> *buffer,
+	                                RingBuffer<std::complex<float>> *iqBuffer,
+	                                RingBuffer<std::complex<float>> *eqBuffer,
+	                                RingBuffer<std::complex<float>> *audioBuffer,
+	                                int32_t		sampleRate,
+	                                int16_t		nSymbols,
+	                                int8_t		windowDepth,
+                                        int8_t 		qam64Roulette) :
+	                                 my_Reader (buffer, 4 * 16384, mr),
+	                                 my_backendController (mr,
+	                                                       iqBuffer,
+	                                                       audioBuffer,
+	                                                       qam64Roulette),
+	                                 theState (mr, 1, 3) {
+	this	-> theDecoder	= mr;
+	this	-> buffer	= buffer;
+	this	-> iqBuffer	= iqBuffer;
+	this	-> eqBuffer	= eqBuffer;
+	this	-> audioBuffer	= audioBuffer;
+	this	-> sampleRate	= sampleRate;
+	this	-> nSymbols	= nSymbols;
+	this	-> windowDepth	= windowDepth;
+//
+//	defaults, will be overruled almost immediately
+	modeInf. Mode		= 1;
+	modeInf. Spectrum	= 3;
+
+	connect (this, SIGNAL (setTimeSync (bool)),
+	         theDecoder, SLOT (executeTimeSync (bool)));
+	connect (this, SIGNAL (setFACSync (bool)),
+	         theDecoder, SLOT (executeFACSync (bool)));
+	connect (this, SIGNAL (setSDCSync (bool)),
+	         theDecoder, SLOT (executeSDCSync (bool)));
+	connect (this, SIGNAL (show_Mode (int)),
+	         theDecoder, SLOT (execute_showMode (int)));
+	connect (this, SIGNAL(show_Spectrum (int)),
+	         theDecoder, SLOT (execute_showSpectrum (int)));
+	connect (this, SIGNAL (show_services (int, int)),
+	         theDecoder, SLOT (show_channels (int, int)));
+	connect (this, SIGNAL (show_audioMode (QString)),
+	         theDecoder, SLOT (show_audioMode (QString)));
+//	connect (this, SIGNAL (showSNR (float)),
+//	         theDecoder, SLOT (showSNR (float)));
+>>>>>>> 13f7ded765b6129a07793d5b0c777ece446b44e3
 }
 
 frameProcessor::~frameProcessor(void) {

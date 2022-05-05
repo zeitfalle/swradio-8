@@ -51,6 +51,7 @@ HEADERS += ./radio-constants.h \
 	   ./various/popup-keypad.h \
 	   ./various/s-meter.h \
 	   ./various/downconverter.h \
+	   ./various/rate-converter.h \
 	   ./decimators/newconverter.h \
 	   ./decimators/decimator.h \
            ./filters/fft-filters.h \
@@ -87,6 +88,7 @@ SOURCES += ./main.cpp \
 	   ./various/slidingfft.cpp \
 	   ./various/program-list.cpp \
 	   ./various/downconverter.cpp \
+	   ./various/rate-converter.cpp \
            ./filters/fft-filters.cpp \
            ./filters/fir-filters.cpp \
            ./filters/iir-filters.cpp \
@@ -130,8 +132,8 @@ CONFIG		+= psk-decoder
 CONFIG		+= rtty-decoder
 CONFIG		+= fax-decoder
 CONFIG		+= mfsk-decoder
-CONFIG		+= drm-decoder-faad
-#CONFIG		+= drm-decoder-fdk
+#CONFIG		+= drm-decoder-faad
+CONFIG		+= drm-decoder-fdk
 #CONFIG		+= test-decoder
 CONFIG          += NO_NEON_RPI4
 LIBS		+= -L/usr/lib64
@@ -167,8 +169,8 @@ CONFIG		+= amtor-decoder
 CONFIG		+= psk-decoder
 CONFIG		+= rtty-decoder
 CONFIG		+= fax-decoder
-CONFIG		+= drm-decoder-faad
-#CONFIG		+= drm-decoder-fdk
+#CONFIG		+= drm-decoder-faad
+CONFIG		+= drm-decoder-fdk
 #
 # includes in mingw differ from the includes in fedora linux
 INCLUDEPATH += /usr/i686-w64-mingw32/sys-root/mingw/include
@@ -417,6 +419,7 @@ drm-decoder-fdk {
 	                   ./decoders/drm-decoder/support/mer4-values.h \
 	                   ./decoders/drm-decoder/support/mer16-values.h \
 	                   ./decoders/drm-decoder/support/mer64-values.h \
+	                   ./decoders/drm-decoder/support/up-converter.h \
 	                   ./decoders/drm-decoder/parameters/state-descriptor.h \
 	                   ./decoders/drm-decoder/parameters/puncture-tables.h \
 	                   ./decoders/drm-decoder/fac/fac-tables.h \
@@ -469,6 +472,7 @@ drm-decoder-fdk {
 	                   ./decoders/drm-decoder/support/mer4-values.cpp \
 	                   ./decoders/drm-decoder/support/mer16-values.cpp \
 	                   ./decoders/drm-decoder/support/mer64-values.cpp \
+	                   ./decoders/drm-decoder/support/up-converter.cpp \
 	                   ./decoders/drm-decoder/parameters/state-descriptor.cpp \
 	                   ./decoders/drm-decoder/parameters/puncture-tables.cpp \
 	                   ./decoders/drm-decoder/fac/fac-tables.cpp \

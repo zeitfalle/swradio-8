@@ -41,6 +41,7 @@
  * 	PARIS) is 50 bits, then for a wpm of 1,
  * 	one bit takes 1.2 second or 1.2 x 10^6	microseconds
  */
+<<<<<<< HEAD
 #define DOT_MAGIC 1200000
 
 extern const char* const codetable[];
@@ -77,6 +78,63 @@ cwDecoder::~cwDecoder(void) {
   delete[] y_values;
   delete myFrame;
   delete newFFT;
+=======
+#define	DOT_MAGIC		1200000
+
+extern const char *const codetable [];
+
+	cwDecoder::cwDecoder (int32_t		inRate,
+	                      RingBuffer<std::complex<float>> *buffer,
+	                      QSettings *s) :
+	                           virtualDecoder (inRate, buffer),
+	                           inputBuffer (inRate),
+	                           inputConverter (inRate, 2000),
+	                           localShifter   (2000) {
+	theRate		= inRate;
+	this	-> cwSettings	= s;
+	myFrame         = new QFrame;
+	setupUi (myFrame);
+	myFrame         -> show (); //
+	workingRate     = 2000;
+	setup_cwDecoder (workingRate);
+	screenwidth     = workingRate;
+//	screenwidth     = workingRate / 2;
+        x_axis          = new double [screenwidth];
+        for (int i = 0; i < screenwidth; i ++)
+	   x_axis [i] = - screenwidth / 2 + i;
+        y_values        = new double [screenwidth];
+
+	fillP		= 0;
+	theFilter       = new decimatingFIR (35, screenwidth / 2, workingRate, 8);
+        cwViewer       = new waterfallScope (cwScope,
+                                             screenwidth, 15);
+
+	newFFT		= new slidingFFT (screenwidth, 0, screenwidth - 1);
+	afcFFT		= new slidingFFT (screenwidth, 0, screenwidth - 1);
+	connect (cwViewer, SIGNAL (clickedwithLeft (int)),
+	         this, SLOT (handleClick (int)));
+        cwSettings     -> beginGroup ("cwDecoder");
+	cw_searchRange	= cwSettings	-> value ("cw_searchRange", 800). toInt ();
+	cwSettings	-> endGroup ();
+	cw_rangeSetter	-> setValue (cw_searchRange); 
+	connect (cw_rangeSetter, SIGNAL (valueChanged (int)),
+	         this, SLOT (set_searchRange (int)));
+}
+
+	cwDecoder::~cwDecoder		(void) {
+	cwSettings	-> beginGroup ("cwDecoder");
+	cwSettings	-> setValue ("cw_searchRange", cw_searchRange);
+	cwSettings	-> endGroup ();
+	delete		SmoothenSamples;
+	delete		thresholdFilter;
+	delete		spaceFilter;
+	delete		cwViewer;
+	delete[]	x_axis;
+	delete[]	y_values;
+	delete		myFrame;
+	delete	afcFFT;
+	delete	newFFT;
+>>>>>>> 13f7ded765b6129a07793d5b0c777ece446b44e3
 }
 
 void cwDecoder::setup_cwDecoder(int32_t rate) {
@@ -157,11 +215,22 @@ void cwDecoder::cw_setTracking(void) {
 
 void cwDecoder::cw_setSquelchValue(int s) { SquelchValue = s; }
 
+<<<<<<< HEAD
 void cwDecoder::cw_setFilterDegree(int n) {
   cwFilterDegree = n;
   if (cw_BandPassFilter != NULL)
     delete cw_BandPassFilter;
   cw_BandPassFilter = new bandpassFIR(2 * cwFilterDegree + 1, cw_IF - 30, cw_IF + 20, workingRate);
+=======
+void	cwDecoder::cw_setFilterDegree (int n) {
+	cwFilterDegree	= n;
+	if (cw_BandPassFilter != NULL)
+	   delete cw_BandPassFilter;
+	cw_BandPassFilter	= new bandpassFIR (2 * cwFilterDegree + 1,
+	                                           cw_IF - 500,
+	                                           cw_IF + 500,
+	                                           workingRate);
+>>>>>>> 13f7ded765b6129a07793d5b0c777ece446b44e3
 }
 
 void cwDecoder::speedAdjust() {
@@ -193,6 +262,7 @@ void cwDecoder::speedAdjust() {
   cwCharbox->setText(QString(" "));
 }
 
+<<<<<<< HEAD
 void cwDecoder::process(std::complex<float> z) {
   audioOut->putDataIntoBuffer(&z, 1);
   processBuffer(&z, 1);
@@ -206,6 +276,22 @@ void cwDecoder::process(std::complex<float> z) {
     audioAvailable(theRate / 10, theRate);
     setDetectorMarker((int)cw_IF);
   }
+=======
+void	cwDecoder::process (std::complex<float> z) {
+	audioOut	-> putDataIntoBuffer (&z, 1);
+	processBuffer (&z, 1);
+	if (++CycleCount > theRate / 10){
+	   CycleCount	= 0;
+	   cw_showdotLength	(cwDotLength);
+	   cw_showspaceLength	(cwSpaceLength);
+	   cw_showspeed		(cwSpeed);
+	   cw_showagcpeak	(clamp (agc_peak * 1000.0, 0.0, 100.0));
+	   cw_shownoiseLevel	(clamp (noiseLevel * 1000.0, 0.0, 100.0));
+	   audioAvailable (theRate / 10, theRate);
+//	   fprintf (stderr, ">>> %d\n", (int)cw_IF);
+	   setDetectorMarker	((int)cw_IF);
+	}
+>>>>>>> 13f7ded765b6129a07793d5b0c777ece446b44e3
 }
 
 void cwDecoder::processBuffer(std::complex<float>* buffer, int32_t amount) {
@@ -226,6 +312,7 @@ void cwDecoder::processBuffer(std::complex<float>* buffer, int32_t amount) {
   }
 }
 
+<<<<<<< HEAD
 void cwDecoder::processSample(std::complex<float> z) {
   DSPCOMPLEX ret;
   int32_t lengthOfTone;
@@ -385,6 +472,200 @@ void cwDecoder::processSample(std::complex<float> z) {
   default:
     break;
   }
+=======
+void	cwDecoder::processSample (std::complex<float> z) {
+DSPCOMPLEX	ret;
+int32_t	lengthOfTone;
+int32_t	lengthOfSilence;
+int32_t	t;
+int i;
+char	buffer [4];
+std::complex<float>	s;
+std::complex<float> res;
+std::complex<float>v [2000];
+std::complex<float> outV [2000];
+static int offs	= 0;
+
+	z	= cdiv (z, 40);
+	s	= localShifter. do_shift (z, cw_IF);
+	s	= cw_BandPassFilter	-> Pass (s);
+	value	=  abs (s);
+	newFFT	-> do_FFT (s, outV);
+//
+//	if the value is (most likely) a '1', then we use it
+//	to compute the frequency offset
+	if (value > agc_peak) {
+	   std::complex<float> ff [screenwidth];
+	   std::complex<float> tempV [screenwidth];
+	   afcFFT	-> do_FFT (s, ff);
+//
+static int ddd = 0;
+static	int oldOffset	= 0;
+	   for (int i = 0; i < screenwidth / 2; i++) {
+	      tempV [i]		= ff [screenwidth / 2 + i];
+	      tempV [screenwidth / 2 + i] = ff [i];
+	   }
+
+	   int offf = offset (tempV);
+	   if ((offf != -100) && (offf != 0)) {
+	      offs += offf;
+	      ddd ++;
+	   }
+	
+	   if (ddd > workingRate / 4) {
+	      offs /= ddd;
+	      oldOffset = 0.5 * oldOffset + 0.5 * offs;
+	      cw_IF += oldOffset / 2;
+	      ddd	= 0;
+	      offs	= 0;
+	      afcFFT -> reset ();
+	   }
+	}
+
+	fillP ++;
+	if (fillP >= workingRate / 10) {
+	   for (i = 0; i < screenwidth; i ++)
+	      y_values [i] = 0.6 * y_values [i] +
+	        0.4 * abs (outV [(screenwidth / 2 + i) % screenwidth]);
+	   cwViewer -> display (x_axis, y_values,
+                                   amplitudeSlider -> value (), 0, 0);
+	   fillP     = 0;
+	   newFFT -> reset ();
+	}
+
+	if (value > agc_peak)
+	   agc_peak = decayingAverage (agc_peak, value, 50.0);
+	else
+	   agc_peak = decayingAverage (agc_peak, value, 500.0);
+
+	currentTime += USECS_PER_SEC / workingRate;
+	switch (cwState) {
+	   case MODE_IDLE:
+	      if ((value > 0.67 * agc_peak) &&
+	          (value > SquelchValue * noiseLevel)) { 
+/*
+ *	we seem to start a new tone
+ */
+	         cwState		= MODE_IN_TONE;
+	         currentTime		= 0;
+	         cwCurrent		= 0;
+	         cwStartTimestamp	= currentTime;
+	         cwPreviousState	= cwState;
+	      }
+	      else 
+	         noiseLevel		= decayingAverage (noiseLevel,
+	                                                   value, 500.0);
+	      break;				/* just wait	*/
+
+	   case MODE_IN_TONE:
+/*
+ *	we are/were receiving a tone, either continue
+ *	or stop it, depending on some threshold value.
+ */
+	      if (value > 0.33 * agc_peak)
+	         break;			/* just go on	*/
+/*
+ *	if we are here, the tone has ended
+ */
+	      cwEndTimestamp	= currentTime;
+	      lengthOfTone	= currentTime - cwStartTimestamp;
+
+	      if (lengthOfTone < cwNoiseSpike) {
+	         cwState = cwPreviousState;
+	         break;
+	      }
+
+	      noiseLevel	= decayingAverage (noiseLevel, value, 500.0);
+
+	      if (lengthOfTone <= cw_adaptive_threshold)
+	         dataBuffer [cwCurrent ++] = CW_DOT_REPRESENTATION;
+	      else
+	         dataBuffer [cwCurrent ++] = CW_DASH_REPRESENTATION;
+
+/*
+ *	if we gathered too many dots and dashes, we end up
+ *	with garbage.
+ */
+	      if (cwCurrent >= CW_RECEIVE_CAPACITY) {
+	         cwCurrent = 0;
+	         cwState = MODE_IDLE;
+	         break;
+	      }
+
+	      dataBuffer [cwCurrent] = 0;
+	      cwCharbox	-> setText (QString (dataBuffer));
+	      cwState = MODE_AFTER_TONE;
+
+	      if (cwTracking) {
+	         t = newThreshold (lengthofPreviousTone, lengthOfTone);
+	         if (t > 0) {
+	            cw_adaptive_threshold = thresholdFilter -> filter (t);
+	            cwDotLength		= cw_adaptive_threshold / 2;
+	            cwDashLength	= 3 * cwDotLength;
+	            cwSpeed		= DOT_MAGIC / cwDotLength;
+	            cwNoiseSpike	= cwDotLength / 3;
+	         }
+	      }
+
+	      lengthofPreviousTone = lengthOfTone;
+	      break;
+
+	   case MODE_AFTER_TONE:
+/*
+ *	following the end of the tone, we might go back for the
+ *	next dash or dot, or we might decide that we reached
+ *	the end of the letter
+ */
+	      if ((value > 0.67 * agc_peak) &&
+	          (value > SquelchValue * noiseLevel)) {
+	         int t = currentTime - cwEndTimestamp;
+	         cwSpaceLength		= spaceFilter -> filter (t);
+	         cwState		= MODE_IN_TONE;
+	         cwStartTimestamp	= currentTime;
+	         cwPreviousState	= cwState;
+	         break;
+	      }	
+// 	no tone, adjust noiselevel and handle silence
+	      noiseLevel	= decayingAverage (noiseLevel, value, 500.0);
+	      lengthOfSilence	= currentTime - cwEndTimestamp;
+
+	      if ((lengthOfSilence >= 2 * (cwDotLength + cwSpaceLength) / 2)) {
+	         lookupToken (dataBuffer, buffer);
+	         cwCurrent = 0;
+	         cwState = MODE_END_OF_LETTER;
+	         cw_addText (buffer [0]);
+	      }
+//	otherwise, silence too short, do nothing as yet
+	      break;
+/*
+ * 	end_of_letter may be followed by another letter or an end
+ * 	of word indication
+ */
+	   case MODE_END_OF_LETTER:	/* almost MODE_IDLE	*/
+	      if ((value > 0.67 * agc_peak) &&
+	          (value > SquelchValue * noiseLevel)) {
+	         cwState		= MODE_IN_TONE;
+	         cwStartTimestamp	= currentTime;
+	         cwPreviousState	= cwState;
+	      }
+	      else {
+/*
+ *	still silence, look what to do
+ */
+	         noiseLevel		= decayingAverage (noiseLevel,
+	                                                   value, 500.0);
+	         lengthOfSilence = currentTime - cwEndTimestamp;
+	         if (lengthOfSilence > 4.0 * (cwSpaceLength + cwDotLength) / 2) {
+	            cw_addText (' ');	/* word space	*/
+	            cwState = MODE_IDLE;
+	         }
+	      }
+	      break;
+
+	   default:
+	      break;
+	}
+>>>>>>> 13f7ded765b6129a07793d5b0c777ece446b44e3
 }
 /*
  * 	check for dot/dash or dash/dot sequence to adapt the
@@ -519,6 +800,7 @@ void cwDecoder::handleClick(int a) {
   adjustFrequency(a / 2);
 }
 
+<<<<<<< HEAD
 #define MAX_SIZE 20
 int cwDecoder::offset(std::complex<float>* v) {
   float avg = 0;
@@ -547,3 +829,38 @@ int cwDecoder::offset(std::complex<float>* v) {
   else
     return -100;
 }
+=======
+#define	MAX_SIZE 24
+int	cwDecoder::offset (std::complex<float> *v) {
+float avg	= 0;
+float sum	= 0;
+float	supermax	= 0;
+int	superIndex	= 0;
+	for (int i = 0; i < screenwidth; i ++)
+	   avg += abs (v [i]);
+	avg /= screenwidth;
+	int	index	= screenwidth / 2 - cw_searchRange / 2;
+	for (int i = 0; i < MAX_SIZE; i ++)
+	   sum +=  abs (v [index + i]);
+
+	supermax	= sum;
+	for (int i = MAX_SIZE; i < cw_searchRange; i ++) {
+	   sum -=  abs (v [(index + i - MAX_SIZE) % screenwidth]);
+	   sum +=  abs (v [(index + i) % screenwidth]);
+	   if (sum > supermax) {
+	      superIndex = (index + i - MAX_SIZE / 2) % screenwidth;
+	      supermax = sum;
+	   }
+	}
+
+	if (supermax / MAX_SIZE > 3 * avg)
+	   return superIndex - screenwidth / 2;
+	else
+	   return -100;
+}
+
+void	cwDecoder::set_searchRange	(int n) {
+	cw_searchRange = n;
+}
+
+>>>>>>> 13f7ded765b6129a07793d5b0c777ece446b44e3

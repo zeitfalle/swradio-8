@@ -26,6 +26,7 @@
 
 #include	"radio-constants.h"
 #include	<QString>
+#include	<vector>
 class	drmDecoder;
 
 //
@@ -90,6 +91,7 @@ enum	{
 	   uint8_t	enhancementFlag;
 	   uint8_t	coderField;
 	   uint8_t	rfa;
+	   std::vector<uint8_t> xHE_AAC;
 	   uint8_t	domain;		//for data transmission
 	   uint8_t	packetModeInd;
 	   uint8_t	dataUnitIndicator;
