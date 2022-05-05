@@ -39,6 +39,7 @@ public:
     QLabel *label;
     QSlider *amplitudeSlider;
     QwtPlot *pskScope;
+    QSpinBox *psk_rangeSetter;
 
     void setupUi(QWidget *psk_widget)
     {
@@ -108,6 +109,13 @@ public:
         pskScope = new QwtPlot(frame);
         pskScope->setObjectName(QString::fromUtf8("pskScope"));
         pskScope->setGeometry(QRect(160, 70, 400, 121));
+        psk_rangeSetter = new QSpinBox(frame);
+        psk_rangeSetter->setObjectName(QString::fromUtf8("psk_rangeSetter"));
+        psk_rangeSetter->setGeometry(QRect(10, 130, 121, 31));
+        psk_rangeSetter->setMinimum(100);
+        psk_rangeSetter->setMaximum(800);
+        psk_rangeSetter->setSingleStep(25);
+        psk_rangeSetter->setValue(400);
 
         retranslateUi(psk_widget);
 

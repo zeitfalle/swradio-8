@@ -39,6 +39,7 @@ public:
     QLCDNumber *dotLengthdisplay;
     QwtPlot *cwScope;
     QSlider *amplitudeSlider;
+    QSpinBox *cw_rangeSetter;
 
     void setupUi(QWidget *cwDecoder)
     {
@@ -102,6 +103,12 @@ public:
         amplitudeSlider->setGeometry(QRect(170, 60, 24, 131));
         amplitudeSlider->setValue(50);
         amplitudeSlider->setOrientation(Qt::Vertical);
+        cw_rangeSetter = new QSpinBox(frame);
+        cw_rangeSetter->setObjectName(QString::fromUtf8("cw_rangeSetter"));
+        cw_rangeSetter->setGeometry(QRect(200, 30, 126, 21));
+        cw_rangeSetter->setMinimum(200);
+        cw_rangeSetter->setMaximum(1400);
+        cw_rangeSetter->setSingleStep(25);
 
         retranslateUi(cwDecoder);
 
