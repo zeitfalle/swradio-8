@@ -110,7 +110,7 @@ public:
 
     void retranslateUi(QWidget *cwDecoder)
     {
-        cwDecoder->setWindowTitle(QCoreApplication::translate("cwDecoder", "cw-decoder", nullptr));
+        cwDecoder->setWindowTitle(QCoreApplication::translate("cwDecoder", "CW-Decoder", nullptr));
 #if QT_CONFIG(tooltip)
         cwCharbox->setToolTip(QCoreApplication::translate("cwDecoder", "<html><head/><body><p>The &quot;dots&quot;, &quot;dashes&quot; and &quot;spaces&quot; in the current word.</p></body></html>", nullptr));
 #endif // QT_CONFIG(tooltip)

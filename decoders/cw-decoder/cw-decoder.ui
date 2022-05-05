@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>cw-decoder</string>
+   <string>CW-Decoder</string>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
